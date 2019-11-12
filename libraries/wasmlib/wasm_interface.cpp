@@ -638,20 +638,13 @@ namespace ftl {
         void assert_sha256(array_ptr<char> data, size_t datalen, const sha256 &hash_val) {
             context.use_gas(GAS_SHA256_BASE + GAS_SHA256_BYTE * datalen);
 
-            //TODO
-            /*
-            auto result = encode<sha256::encoder>(data, datalen);
-            EOS_ASSERT(result == hash_val, crypto_api_exception, "hash mismatch");
-             */
+            auto result = hash(data, datalen);
+            FTL_ASSERT(result == hash_val, crypto_api_exception, "hash mismatch");
         }
 
         void sha256(array_ptr<char> data, size_t datalen, sha256 &hash_val) {
             context.use_gas(GAS_SHA256_BASE + GAS_SHA256_BYTE * datalen);
-
-            //TODO
-            /*
-            hash_val = encode<sha256::encoder>(data, datalen);
-             */
+            hash_val = hash(data, datalen);
         }
 
     protected:
@@ -931,8 +924,12 @@ namespace ftl {
 
         void printhex(array_ptr<const char> data, size_t data_len) {
             if (!ignore) {
-                // TODO
-                //context.console_append(fc::to_hex(data, data_len));
+                std::string r;
+                const char* to_hex="0123456789abcdef";
+                const uint8_t* c = reinterpret_cast<const uint8_t*>((const char*)data);
+                for( uint32_t i = 0; i < data_len; ++i )
+                    (r += to_hex[(c[i]>>4)]) += to_hex[(c[i] &0x0f)];
+                context.console_append(r);
             }
         }
 

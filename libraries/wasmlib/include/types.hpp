@@ -42,4 +42,5 @@ namespace ftl {
     typedef int c_sha256(char *input, int length, char *hash);
     extern c_sha256 *g_sha256;
     sha256 hash(const bytes &input);
+    sha256 hash(const char *input, int length);
 }
